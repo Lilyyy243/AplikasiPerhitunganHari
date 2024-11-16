@@ -84,6 +84,11 @@ public class AplikasiPerhitunganHari extends javax.swing.JFrame {
         jPanel1.add(tahunSpinner, gridBagConstraints);
 
         jumlahButton.setText("Jumlahkan");
+        jumlahButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jumlahButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
@@ -105,6 +110,12 @@ public class AplikasiPerhitunganHari extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(9, 10, 0, 0);
         jPanel1.add(tanggalCalendar, gridBagConstraints);
+
+        jumlahTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jumlahTextFieldActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
@@ -140,6 +151,21 @@ public class AplikasiPerhitunganHari extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jumlahTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumlahTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jumlahTextFieldActionPerformed
+
+    private void jumlahButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumlahButtonActionPerformed
+        // TODO add your handling code here:
+        String bulan = (String) bulanComboBox.getSelectedItem();
+        int tahun = (Integer) tahunSpinner.getValue();
+        int bulanIndex = bulanComboBox.getSelectedIndex() + 1; // Convert to 1-based month index
+        YearMonth yearMonth = YearMonth.of(tahun, bulanIndex);
+        int jumlahHari = yearMonth.lengthOfMonth();
+
+        jumlahTextField.setText(String.valueOf(jumlahHari));
+    }//GEN-LAST:event_jumlahButtonActionPerformed
 
     /**
      * @param args the command line arguments
