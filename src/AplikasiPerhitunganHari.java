@@ -3,11 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
+
+import java.time.temporal.ChronoUnit;
+
+
 /**
  *
  * @author mmada
  */
 public class AplikasiPerhitunganHari extends javax.swing.JFrame {
+    // Remove isAdjusting flag since we don't need it anymore
 
     /**
      * Creates new form AplikasiPerhitunganHari
@@ -15,20 +20,26 @@ public class AplikasiPerhitunganHari extends javax.swing.JFrame {
     public AplikasiPerhitunganHari() {
         initComponents();
         
-        // Inisialisasi tahun dengan rentang 10 tahun sebelum dan sesudah
-        java.time.LocalDate now = java.time.LocalDate.now();
-        int tahunSekarang = now.getYear();
+        // Initialize with current date
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        int currentYear = cal.get(java.util.Calendar.YEAR);
+        
+        // Setup initial spinner model only
         tahunSpinner.setModel(new javax.swing.SpinnerNumberModel(
-            tahunSekarang, 
-            tahunSekarang - 10, 
-            tahunSekarang + 10, 
+            currentYear, 
+            currentYear - 10, 
+            currentYear + 10, 
             1
         ));
         
-        // Tambahkan komponen baru
-        setupAdditionalComponents();
+        // Set properti TextArea
+        jTextArea1.setEditable(false);
+        jTextArea1.setLineWrap(true);
+        jTextArea1.setWrapStyleWord(true);
         
         // Tambahkan listener untuk tombol keluar
+        keluarButton.addActionListener(evt -> System.exit(0));
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -49,9 +60,10 @@ public class AplikasiPerhitunganHari extends javax.swing.JFrame {
         tahunSpinner = new javax.swing.JSpinner();
         jumlahButton = new javax.swing.JButton();
         keluarButton = new javax.swing.JButton();
-        jumlahTextField = new javax.swing.JTextField();
         jumlahLabel = new javax.swing.JLabel();
         jCalendar1 = new com.toedter.calendar.JCalendar();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         jLabel4.setText("jLabel4");
 
@@ -108,13 +120,18 @@ public class AplikasiPerhitunganHari extends javax.swing.JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(9, 11, 0, 9);
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(10, 11, 0, 9);
         jPanel1.add(jumlahButton, gridBagConstraints);
 
         keluarButton.setText("Keluar");
+        keluarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                keluarButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
@@ -122,32 +139,30 @@ public class AplikasiPerhitunganHari extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(10, 11, 12, 9);
         jPanel1.add(keluarButton, gridBagConstraints);
 
-        jumlahTextField.setFocusable(false);
-        jumlahTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jumlahTextFieldActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(11, 10, 0, 0);
-        jPanel1.add(jumlahTextField, gridBagConstraints);
-
         jumlahLabel.setText("Jumlah Hari");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
         gridBagConstraints.insets = new java.awt.Insets(13, 8, 0, 14);
         jPanel1.add(jumlahLabel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(12, 11, 0, 0);
         jPanel1.add(jCalendar1, gridBagConstraints);
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(10, 12, 0, 0);
+        jPanel1.add(jScrollPane1, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -155,50 +170,68 @@ public class AplikasiPerhitunganHari extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 721, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jumlahTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumlahTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jumlahTextFieldActionPerformed
-
     private void jumlahButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumlahButtonActionPerformed
-        // Ambil bulan dari ComboBox (indeks dimulai dari 0)
-        int bulan = bulanComboBox.getSelectedIndex() + 1;
-        
-        // Ambil tahun dari Spinner
+        // Get date from spinner and combobox
         int tahun = (Integer) tahunSpinner.getValue();
+        int bulan = bulanComboBox.getSelectedIndex() + 1;
+        java.time.LocalDate date1 = java.time.LocalDate.of(tahun, bulan, 1);
         
-        // Gunakan LocalDate untuk menghitung jumlah hari
-        java.time.YearMonth yearMonth = java.time.YearMonth.of(tahun, bulan);
-        int jumlahHari = yearMonth.lengthOfMonth();
+        // Get date from JCalendar
+        java.util.Calendar cal = jCalendar1.getCalendar();
+        java.time.LocalDate date2 = java.time.LocalDate.of(
+            cal.get(java.util.Calendar.YEAR),
+            cal.get(java.util.Calendar.MONTH) + 1,
+            cal.get(java.util.Calendar.DAY_OF_MONTH)
+        );
         
-        // Tampilkan hasil
-        jumlahTextField.setText(String.valueOf(jumlahHari));
+        // Calculate difference
+        long selisihHari = Math.abs(ChronoUnit.DAYS.between(date1, date2));
+        
+        // Format dates
+        java.time.format.DateTimeFormatter formatter = 
+            java.time.format.DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy", new java.util.Locale("id", "ID"));
+            
+        // Build output text
+        StringBuilder info = new StringBuilder();
+        info.append("Informasi Selisih Tanggal:\n\n");
+        info.append("Tanggal Pertama: ").append(date1.format(formatter)).append("\n");
+        info.append("Tanggal Kedua: ").append(date2.format(formatter)).append("\n");
+        info.append("Selisih: ").append(selisihHari).append(" hari\n\n");
+        
+        // Add leap year information if applicable
+        if (date1.isLeapYear()) {
+            info.append("Tahun ").append(date1.getYear()).append(" adalah tahun kabisat\n");
+        }
+        if (date2.isLeapYear() && date1.getYear() != date2.getYear()) {
+            info.append("Tahun ").append(date2.getYear()).append(" adalah tahun kabisat");
+        }
+        
+        // Display result
+        jTextArea1.setText(info.toString());
     }//GEN-LAST:event_jumlahButtonActionPerformed
 
-    private void tahunSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tahunSpinnerStateChanged
-        // Update JCalendar saat tahun berubah
-        int tahun = (Integer) tahunSpinner.getValue();
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
-        calendar.set(java.util.Calendar.YEAR, tahun);
-        jCalendar1.setDate(calendar.getTime());
-    }//GEN-LAST:event_tahunSpinnerStateChanged
-
-    private void keluarButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void keluarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keluarButtonActionPerformed
+        // TODO add your handling code here:
         System.exit(0);
-    }
+    }//GEN-LAST:event_keluarButtonActionPerformed
+
+    private void tahunSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tahunSpinnerStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tahunSpinnerStateChanged
 
     /**
      * @param args the command line arguments
@@ -242,9 +275,10 @@ public class AplikasiPerhitunganHari extends javax.swing.JFrame {
     private com.toedter.calendar.JCalendar jCalendar1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JButton jumlahButton;
     private javax.swing.JLabel jumlahLabel;
-    private javax.swing.JTextField jumlahTextField;
     private javax.swing.JButton keluarButton;
     private javax.swing.JLabel tahunLabel;
     private javax.swing.JSpinner tahunSpinner;
